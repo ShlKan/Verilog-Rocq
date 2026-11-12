@@ -1,0 +1,17 @@
+; The whole development: Lib (semantic domain), Lang (Verilog syntax, LFP semantics,
+; ITree module layer, equivalence proof), Ex (RISC-V case study).
+; `include_subdirs qualified` makes dune pick up .v files from the subdirectories and
+; qualify them by path (VerilogRocq.Lang.Semantics), matching the `-R` layout the
+; sources were written for.
+; FreeSim and Ordinal are dune theories under dep/; the rest are installed theories from
+; the Nix dev shell. Dune binds load paths only for theories listed here.
+; RiscVITree (and its stdpp) provide the bit-vector value type of Lang/Events.v.
+(include_subdirs qualified)
+
+(coq.theory
+ (name VerilogRocq)
+ (theories Stdlib FreeSim Ordinal coqutil ITree Paco ExtLib stdpp RiscVITree)
+ ; Syntax.v's custom-entry Verilog grammar triggers hundreds of
+ ; notation-incompatible-prefix warnings on Rocq 9.0 that bury everything else.
+ ; The case study parses through that grammar and builds, so they are silenced.
+ (flags (:standard -w -notation-incompatible-prefix)))

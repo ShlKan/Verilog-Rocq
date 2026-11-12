@@ -1,0 +1,12 @@
+Parked 2026-11-06 when the project moved to Rocq 9.0 and dropped dep/riscv-coq.
+
+These four files are the artifact's formal RISC-V specification and the end-to-end
+refinement proof of the pipelined core against it, written against mit-plv/riscv-coq:
+
+  Machine.v     RISC-V machine state over riscv-coq
+  FormalSpec.v  the reference semantics S_riscv (paper Section 5.3)
+  FormalSim.v   simulation between the core and S_riscv
+  EndToEnd.v    Theorem core_follow_riscv_formal (paper Theorem 5.2 / Section 5.5)
+
+They do not compile here. Keep them as the model for redoing the refinement against
+the RiscVITree specification (flake input risc-v-itree).

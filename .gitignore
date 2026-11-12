@@ -1,0 +1,33 @@
+# Coq build products
+*.vo
+*.vos
+*.vok
+*.glob
+*.aux
+.*.aux
+*.v.d
+.coqdeps.d
+Makefile.coq
+Makefile.coq.conf
+.lia.cache
+.nia.cache
+
+# dune
+_build/
+
+# Nix
+result
+result-*
+.direnv/
+
+# Editors / OS
+*~
+*.swp
+\#*\#
+.\#*
+.vscode/
+.idea/
+.DS_Store
+
+# Local tool state
+.claude/settings.local.json

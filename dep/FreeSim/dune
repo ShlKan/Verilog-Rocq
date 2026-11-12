@@ -1,0 +1,7 @@
+; CCR-project/FreeSim (OOPSLA 2023, "Stuttering For Free"), as shipped with the
+; Choi/Kim/Kang OOPSLA 2025 artifact (their Coq 8.18 patches), flattened from lib/ and
+; sim/ into one directory so modules keep their flat names (FreeSim.ModSemE), and
+; ported to Rocq 9.0 here. The upstream compcert/ part is not included.
+(coq.theory
+ (name FreeSim)
+ (theories Stdlib ITree Paco ExtLib Ordinal))

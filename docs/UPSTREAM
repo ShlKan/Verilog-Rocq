@@ -1,0 +1,42 @@
+This project is a fork of the artifact of
+  "Revamping Verilog Semantics for Foundational Verification"
+  Joonwon Choi, Jaewoo Kim, Jeehoon Kang. OOPSLA 2025 (PACMPL 9, OOPSLA2, art. 306)
+
+Source:  https://doi.org/10.5281/zenodo.16923443  (pfv.tar.gz, v1, 2025-08-22)
+MD5:     8a91da326f1768dbc2b991ef36093442
+License: BSD-3-Clause (coq-verilog.opam in the tarball)
+Imported: 2026-11-02 (Coq 8.18.0); moved to Rocq 9.0 on 2026-11-06.
+
+Mapping from the tarball to this repository:
+  pfv/src/                 -> src/            (Lib, Lang, Ex; developed here)
+  pfv/dep/FreeSim/lib,sim  -> dep/FreeSim/    (flattened into one directory, see below)
+  pfv/README.md            -> docs/upstream-artifact-README.md
+                              (its paper-to-code map still applies to src/)
+  pfv/src/Ex/RvCore/{Machine,FormalSpec,FormalSim,EndToEnd}.v
+                           -> attic/RvCore-riscv-coq/   (parked; depend on riscv-coq)
+
+Not imported:
+  pfv/dep/coqutil          replaced by nixpkgs' coqutil (0.0.7); only coqutil.Z.BitOps is used
+  pfv/dep/riscv-coq        dropped with the parked files; the RISC-V specification side is
+                           now the RiscVITree theory (flake input risc-v-itree)
+  pfv/dep/FreeSim/compcert the only part needing coq-compcert; unused here
+  coq-verilog.opam, Makefiles, _CoqProject files
+                           replaced by flake.nix and dune
+
+Third-party code carried in dep/ (each a dune theory):
+  dep/FreeSim   CCR-project/FreeSim, OOPSLA 2023, BSD-3-Clause. The artifact's copy (their
+                Coq 8.18 patches), with lib/ and sim/ merged into one directory so module
+                names stay flat (FreeSim.ModSemE), plus our Rocq 9.0 patches:
+                  STS2ITree.v           `rewrite unfold_decompile_STS` made `try`: simpl now
+                                        unfolds decompile_STS one step on its own
+                  SimGlobalIndexFacts.v ten proof sites in _eutt0C/_eutt1C_grespectful that
+                                        rewrote a `Heq` hypothesis des_ifs no longer leaves;
+                                        new tactic `rel_ret_l` strips the residual Ret-bind
+  dep/Ordinal   snu-sf/Ordinal v0.5.6 (opam coq-ordinal), MIT, unmodified. Needed by
+                FreeSim; not packaged in nixpkgs for Rocq 9.0.
+                https://github.com/snu-sf/Ordinal/archive/refs/tags/v0.5.6.tar.gz
+                sha512 753507ae5bc2d4bb02bd3e60f704c2631afb3238b1c0aabc6022a81cbc28e783f30f227a3968febe422c07e7279fb435b14911d12f47e72c0ab60ce47d7e8e55
+
+Changes to src/ since import are ours. The Rocq 9.0 move only renamed deprecated
+`Coq.*` / `From Coq` standard-library imports to `Stdlib` (and `Lists.Streams`, which
+9.0 moved, to `Streams.Streams`); no proof needed changes.

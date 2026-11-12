@@ -1,0 +1,6 @@
+; snu-sf/Ordinal v0.5.6 (opam coq-ordinal), MIT license: ordinal numbers in Rocq.
+; Carried here because nixpkgs does not package it for Rocq 9.0. Needed by FreeSim.
+; Source: https://github.com/snu-sf/Ordinal/archive/refs/tags/v0.5.6.tar.gz
+(coq.theory
+ (name Ordinal)
+ (theories Stdlib))
