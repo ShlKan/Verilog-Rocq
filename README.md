@@ -22,6 +22,7 @@ own licenses, listed in `NOTICE`.
 |---|---|
 | `src/Lib/` | Semantic domain: hierarchical maps (`HMap.v`), sized integers (`SZ.v`), tactics. |
 | `src/Lang/` | Verilog syntax (`Syntax.v`), the LFP semantics (`Semantics.v`), port analysis, module transition functions, the ITree module layer (`ModuleITree.v`). |
+| `src/Semantics/` | The new ITree semantics, one folder per group of constructs (`Core/`: events and scheduler). Plan and status in `docs/constructs.md`. |
 | `src/Lang/Equiv/` | Equivalence of the LFP semantics with the standard scheduling semantics. |
 | `src/Ex/RvCore/` | Pipelined RISC-V core (Verilog, embedded via the notation in `Syntax.v`), its caches and frontend, and the per-module simulation proofs. |
 | `attic/RvCore-riscv-coq/` | The artifact's RISC-V reference spec and end-to-end theorem, written against `riscv-coq`; parked until redone against `RiscVITree`. Not built. |

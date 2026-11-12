@@ -12,7 +12,7 @@ Provenance and the list of modifications are in docs/UPSTREAM.
      "Revamping Verilog Semantics for Foundational Verification". OOPSLA 2025.
      https://doi.org/10.5281/zenodo.16923443
    License: BSD 3-Clause (text below).
-   Files added here (e.g. src/Lang/Events.v) are MIT.
+   Files added here (src/Semantics/) are MIT.
 
 2. dep/FreeSim/
    CCR-project/FreeSim (OOPSLA 2023), as carried in the artifact above, with the

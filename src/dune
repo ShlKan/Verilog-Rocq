@@ -5,7 +5,7 @@
 ; sources were written for.
 ; FreeSim and Ordinal are dune theories under dep/; the rest are installed theories from
 ; the Nix dev shell. Dune binds load paths only for theories listed here.
-; RiscVITree (and its stdpp) provide the bit-vector value type of Lang/Events.v.
+; RiscVITree (and its stdpp) provide the bit-vector value type of Semantics/Core/Events.v.
 (include_subdirs qualified)
 
 (coq.theory

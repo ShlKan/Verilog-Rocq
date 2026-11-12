@@ -1,7 +1,7 @@
 (** * Events of the ITree semantics of Verilog
 
     This file fixes the event signature of the new, ITree-based semantics. It is
-    independent of [Semantics.v] (the imported LFP semantics over [hmap]) and of the
+    independent of [Lang/Semantics.v] (the imported LFP semantics over [hmap]) and of the
     syntax; the denotation of the syntax into these events comes in a later file.
 
     Design:
@@ -15,8 +15,10 @@
     - Clock edges are detected by a handler that remembers previous values
       ([Fired]); nonblocking assignments are pending until [Commit], which applies
       all of them at once at the end of the step.
+    - The order of the blocks within a step is not fixed by Verilog; it is a
+      [Choose] event, so a racy program has all of its outcomes in its tree.
     - Nothing is dropped silently: an unsupported or ill-formed construct is an
-      [Err] event with no continuation.
+      error event ([errE]) with no continuation.
 
     Values are bit-vectors [bv n] from the [BitVec] class of [RiscVITree.data], so a
     design and the RISC-V specification share one value type. Identifiers stay
@@ -24,12 +26,24 @@
     [string], the case study with its enum. *)
 
 From Stdlib Require Import NArith.BinNat Lists.List Strings.String.
-From ITree Require Import Basics.Basics Core.Subevent Indexed.Sum.
+(* [Fin.t n] is only the answer type of [Choose]; the stdlib's advice against its
+   vector library does not concern that use. *)
+#[local] Set Warnings "-stdlib-vector".
+From Stdlib Require Vectors.Fin.
+#[local] Set Warnings "+stdlib-vector".
+From ITree Require Import Basics.Basics Core.Subevent Indexed.Sum Events.Exception.
 From stdpp Require Import base.
 From RiscVITree Require Import data.
 Require Import Lib.HMap.
 
 Set Implicit Arguments.
+
+(** ** Errors: no continuation, never silent
+
+    The exception event of the ITree library, with a message: [Throw msg] answers
+    in [void], so nothing follows it. Constructs raise it with the library's
+    [throw msg]. *)
+Notation errE := (exceptE string).
 
 Section Events.
   Context `{vid_ops} `{BitVec}.
@@ -134,25 +148,39 @@ Section Events.
 
       [Fired (Pos x)] asks whether [x] rose since the previous step; the handler
       keeps the previous values, so edge detection is not part of the Verilog state.
-      [Commit] ends the step: every pending [SetNB] takes effect at once. *)
+      [Commit] ends a round: the handler first remembers the current values as the
+      previous ones, then every pending [SetNB] takes effect at once. It answers
+      whether any location changed; a step repeats rounds until the answer is
+      [false], which is how an edge on a signal produced by a flop is seen. *)
   Variant edge := Pos (x : nloc) | Neg (x : nloc).
 
   Variant stepE : Type -> Type :=
   | Fired (e : edge) : stepE bool
-  | Commit : stepE unit.
+  | Commit : stepE bool.
 
-  (** ** Errors: no continuation, never silent *)
-  Variant errE : Type -> Type :=
-  | Err (msg : string) : errE void.
+  (** ** Scheduling choice
+
+      Verilog does not fix the order in which the blocks of a module run within a
+      step. [Choose n] asks which of [n] runnable blocks goes next. Left
+      uninterpreted, the tree has every order as a branch; a handler that answers it
+      is one particular scheduler. When the blocks are pairwise independent every
+      answer gives the same tree up to reordering, so the choice can be interpreted
+      away; when they race (two blocks writing one location) the branches differ and
+      the choice is the meaning of the program. [Choose] itself commutes with no
+      event of the blocks it chooses among. *)
+  Variant chooseE : Type -> Type :=
+  | Choose (n : nat) : chooseE (Fin.t n).
+
 
   (** ** The event signature of a module
 
       Module items (blocks, continuous assignments) are denoted over [sigE], [stepE]
       and [errE] only: inside the module, ports are ordinary locations. The step
-      wrapper around the items reads every input with [In] into the store first and
-      emits every output with [Out] after [Commit]. *)
+      wrapper around the items reads every input with [In] into the store first,
+      orders the items with [Choose], and emits every output with [Out] after
+      [Commit]. *)
   Definition moduleE (S : sigs) (I : iface) : Type -> Type :=
-    sigE S +' stepE +' portE I +' errE.
+    sigE S +' stepE +' chooseE +' portE I +' errE.
 
 End Events.
 
