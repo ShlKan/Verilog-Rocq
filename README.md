@@ -13,7 +13,8 @@ accelerators later.
 
 Provenance of the imported code and every deviation from it is in `docs/UPSTREAM`; the
 paper-to-code map from the artifact is in `docs/upstream-artifact-README.md` and still
-applies to `src/`.
+applies to `src/`. The project is MIT-licensed (`LICENSE`); the imported parts keep their
+own licenses, listed in `NOTICE`.
 
 ## Layout
 
